@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NProducts.DAL;
+using NProducts.Data.Context;
 
 namespace NProducts.Web
 {
@@ -36,6 +38,8 @@ namespace NProducts.Web
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddTransient<NorthwindUnitOfWork>();
+
+            services.AddDbContext<NorthwindContext>(options => options.UseSqlServer(Configuration.GetConnectionString("NorthwindDB")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -17,10 +17,4 @@
     <ProjectReference Include="..\NProducts.DAL\NProducts.DAL.csproj" />
   </ItemGroup>
 
-
-  <ItemGroup>
-    <Folder Include="Views\Categories\" />
-    <Folder Include="Views\Products\" />
-  </ItemGroup>
-
 </Project>
