@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using NProducts.DAL;
 using NProducts.Data.Models;
 using NProducts.WebApi.DTO;
+using NProducts.WebApi.Models;
 
 namespace NProducts.WebApi.Controllers
 {
@@ -21,7 +23,7 @@ namespace NProducts.WebApi.Controllers
     public class ProductsController : ControllerBase
     {
         private ILogger<ProductsController> logger;
-        private IConfiguration configuration;        
+        private IConfiguration configuration;
 
         public ProductsController(ILogger<ProductsController> logger, IConfiguration configuration)
         {
@@ -35,12 +37,17 @@ namespace NProducts.WebApi.Controllers
         /// </summary>
         /// <returns>List of all products in the database</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductsDTO>>> Get()
+        public async Task<ActionResult<PagedCollectionResponse<ProductsDTO>>> Get([FromQuery]ProductsFilterModel filter)
         {
             var mapper = GetProductsToProductsDTOMapper();
             using (var unitofwork = new NorthwindUnitOfWork(this.configuration))
             {
-                var result = await unitofwork.Products.GetAllAsync();
+                Func<Products, bool> wherecond = (p) =>
+                {
+                    return string.IsNullOrEmpty(filter.ProductName) || p.ProductName.StartsWith(filter.ProductName);
+                };
+
+                var result = await unitofwork.Products.GetAsync(filter.Page, filter.PageSize, filter.OrderByFieldName, filter.OrderByDirection, wherecond);
                 var resultdto = mapper.Map<IEnumerable<Products>, IEnumerable<ProductsDTO>>(result);
                 return Ok(resultdto);
             }
@@ -76,7 +83,7 @@ namespace NProducts.WebApi.Controllers
                 unitofwork.Save();
                 return Ok(p.ProductId);
             }
-        }        
+        }
 
         // PUT api/products/5
         [HttpPut("{id}")]

@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using NProducts.WebApi.Models;
 
 namespace NProducts.Tests.WebApi
 {
@@ -58,9 +59,17 @@ namespace NProducts.Tests.WebApi
         {
             // Arrange
             var productsController = this.CreateProductsController();
+            var filter = new ProductsFilterModel()
+            {
+                Page = 1,
+                PageSize = 20,
+                ProductName = "",
+                OrderByDirection = "DESC",
+                OrderByFieldName= "ProductName"
+            };
 
             // Act
-            var result = await productsController.Get();
+            var result = await productsController.Get(filter);
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             var ok = result.Result as OkObjectResult;
             var list = ok.Value as IEnumerable<ProductsDTO>;
@@ -74,7 +83,17 @@ namespace NProducts.Tests.WebApi
         {
             // Arrange
             var productsController = this.CreateProductsController();
-            var all = await productsController.Get();
+
+            var filter = new ProductsFilterModel()
+            {
+                Page = 1,
+                PageSize = 20,
+                ProductName = "",
+                OrderByDirection = "DESC",
+                OrderByFieldName = "ProductName"
+            };
+
+            var all = await productsController.Get(filter);
 
             Assert.IsInstanceOfType(all.Result, typeof(OkObjectResult));
             var ok = all.Result as OkObjectResult;
