@@ -3,6 +3,8 @@ using NProducts.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
+using NProducts.DAL.Interfaces;
+using NProducts.Data.Models;
 
 namespace NProducts.DAL
 {
@@ -10,7 +12,8 @@ namespace NProducts.DAL
     {
         private bool disposed = false;
         private NorthwindContext db;
-        private ProductsRepository productsRepository;
+        private IRepository<Products> productsRepository;
+        private IRepository<Categories> categoriesRepository;
 
         public NorthwindUnitOfWork(IConfiguration configuration)
         {
@@ -19,13 +22,23 @@ namespace NProducts.DAL
             this.db = new NorthwindContext(optionsBuilder.Options);
         }
 
-        public ProductsRepository Products
+        public IRepository<Products> Products
         {
             get
             {
                 if (productsRepository == null)
                     productsRepository = new ProductsRepository(db);
                 return productsRepository;
+            }
+        }
+
+        public IRepository<Categories> Categories
+        {
+            get
+            {
+                if (categoriesRepository == null)
+                    categoriesRepository = new CategoriesRepository(db);
+                return categoriesRepository;
             }
         }
 

@@ -15,71 +15,71 @@ namespace NProducts.DAL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public class ProductsRepository: IRepository<Products>
+    public class CategoriesRepository : IRepository<Categories>
     {
         private NorthwindContext db;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProductsRepository"/> class.
+        /// Initializes a new instance of the <see cref="CategoriesRepository"/> class.
         /// </summary>
         /// <param name="db">The database.</param>
-        public ProductsRepository(NorthwindContext db)
+        public CategoriesRepository(NorthwindContext db)
         {
             this.db = db;
         }
 
-        public void Create(Products item)
+        public void Create(Categories item)
         {
-            db.Products.Add(item);
+            db.Categories.Add(item);
         }
 
         public void Delete(int id)
         {
-            Products product = db.Products.Find(id);
-            if (product != null)
-                db.Products.Remove(product);
+            Categories item = db.Categories.Find(id);
+            if (item != null)
+                db.Categories.Remove(item);
         }
 
-        public IEnumerable<Products> Find(Func<Products, bool> predicate)
+        public IEnumerable<Categories> Find(Func<Categories, bool> predicate)
         {
-            return db.Products.Where(predicate).ToList();
+            return db.Categories.Where(predicate).ToList();
         }       
 
-        public Products Get(int id)
+        public Categories Get(int id)
         {
-            return this.db.Products.Find(id);
+            return this.db.Categories.Find(id);
         }
 
-        public async Task<Products> GetAsync(int id)
+        public async Task<Categories> GetAsync(int id)
         {
-            return await this.db.Products.FindAsync(id);
+            return await this.db.Categories.FindAsync(id);
         }
 
-        public IEnumerable<Products> GetAll()
+        public IEnumerable<Categories> GetAll()
         {
-            return this.db.Products;
+            return this.db.Categories;
         }
 
-        public async Task<IEnumerable<Products>> GetAllAsync()
+        public async Task<IEnumerable<Categories>> GetAllAsync()
         {
-            return await this.db.Products.Include(a => a.Category).Include(a => a.Supplier).ToListAsync();
-        }       
+            return await this.db.Categories.ToListAsync();
+        }
 
-        public void Update(Products item)
+        public void Update(Categories item)
         {
             db.Entry(item).State = EntityState.Modified;
-        }
+        }        
 
-        public async Task<IEnumerable<Products>> GetAsync(int page, int pagesize, string orderbyfieldname, string orderbydirection, Func<Products, bool> filter)
+        public async Task<IEnumerable<Categories>> GetAsync(int page, int pagesize, string orderbyfieldname, string orderbydirection, Func<Categories, bool> filter)
         {
             if (string.IsNullOrEmpty(orderbyfieldname))
             {
-                var p = new Products();
-                orderbyfieldname = nameof(p.ProductId);
+                var p = new Categories();
+                orderbyfieldname = nameof(p.CategoryId);
                 orderbydirection = "ASC";
             }
 
-            var query = from t in this.db.Products.Include(a => a.Category).Include(a => a.Supplier) select t;
+            var query = from t in this.db.Categories select t;
             query = query.Where(a => filter(a));
             if (orderbydirection == "ASC")
             {
