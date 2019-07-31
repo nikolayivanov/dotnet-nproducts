@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using NProducts.DAL;
+using NProducts.DAL.Interfaces;
 using NProducts.Data.Context;
 using NProducts.Data.Models;
 
@@ -12,17 +16,19 @@ namespace NProducts.Web.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly NorthwindContext _context;
+        private ILogger<CategoriesController> logger;        
+        private IUnitOfWork unitofwork;
 
-        public CategoriesController(NorthwindContext context)
-        {
-            _context = context;
+        public CategoriesController(IUnitOfWork unitofwork, ILogger<CategoriesController> logger)
+        {            
+            this.unitofwork = unitofwork;
+            this.logger = logger;            
         }
 
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            return View(await unitofwork.Categories.GetAllAsync());
         }
 
         // GET: Categories/Details/5
@@ -33,14 +39,14 @@ namespace NProducts.Web.Controllers
                 return NotFound();
             }
 
-            var categories = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
+            var categories = await unitofwork.Categories.GetAsync(id.Value);
             if (categories == null)
             {
                 return NotFound();
             }
 
             return View(categories);
+
         }
 
         // GET: Categories/Create
@@ -58,10 +64,11 @@ namespace NProducts.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(categories);
-                await _context.SaveChangesAsync();
+                this.unitofwork.Categories.Create(categories);
+                await this.unitofwork.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(categories);
         }
 
@@ -73,7 +80,7 @@ namespace NProducts.Web.Controllers
                 return NotFound();
             }
 
-            var categories = await _context.Categories.FindAsync(id);
+            var categories = await this.unitofwork.Categories.GetAsync(id.Value);
             if (categories == null)
             {
                 return NotFound();
@@ -97,8 +104,8 @@ namespace NProducts.Web.Controllers
             {
                 try
                 {
-                    _context.Update(categories);
-                    await _context.SaveChangesAsync();
+                    this.unitofwork.Categories.Update(categories);
+                    await this.unitofwork.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,8 +131,7 @@ namespace NProducts.Web.Controllers
                 return NotFound();
             }
 
-            var categories = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
+            var categories = await this.unitofwork.Categories.GetAsync(id.Value);
             if (categories == null)
             {
                 return NotFound();
@@ -138,16 +144,15 @@ namespace NProducts.Web.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var categories = await _context.Categories.FindAsync(id);
-            _context.Categories.Remove(categories);
-            await _context.SaveChangesAsync();
+        {            
+            this.unitofwork.Categories.Delete(id);
+            await this.unitofwork.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CategoriesExists(int id)
         {
-            return _context.Categories.Any(e => e.CategoryId == id);
+            return this.unitofwork.Categories.Get(id) != null;
         }
     }
 }

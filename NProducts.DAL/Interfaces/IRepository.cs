@@ -15,12 +15,13 @@ namespace NProducts.DAL.Interfaces
         Task<IEnumerable<T>> GetAsync(int page, int pagesize, string orderbyfieldname, string orderbydirection, Func<T, Boolean> filter);
 
         T Get(int id);
+        
         Task<T> GetAsync(int id);
 
         IEnumerable<T> Find(Func<T, Boolean> predicate);
         
         void Create(T item);
         void Update(T item);
-        void Delete(int id);
+        void Delete(int id);        
     }
 }

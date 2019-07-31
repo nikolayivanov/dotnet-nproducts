@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NProducts.DAL;
+using NProducts.DAL.Interfaces;
 using NProducts.Data.Models;
 using NProducts.WebApi.DTO;
 using NProducts.WebApi.Models;
@@ -22,13 +23,13 @@ namespace NProducts.WebApi.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private ILogger<ProductsController> logger;
-        private IConfiguration configuration;
+        private ILogger<ProductsController> logger;        
+        private IUnitOfWork unitofwork;
 
-        public ProductsController(ILogger<ProductsController> logger, IConfiguration configuration)
+        public ProductsController(ILogger<ProductsController> logger, IUnitOfWork unitofwork)
         {
-            this.logger = logger;
-            this.configuration = configuration;
+            this.logger = logger;            
+            this.unitofwork = unitofwork;
         }
 
         // GET api/products
@@ -40,17 +41,15 @@ namespace NProducts.WebApi.Controllers
         public async Task<ActionResult<PagedCollectionResponse<ProductsDTO>>> Get([FromQuery]ProductsFilterModel filter)
         {
             var mapper = GetProductsToProductsDTOMapper();
-            using (var unitofwork = new NorthwindUnitOfWork(this.configuration))
-            {
-                Func<Products, bool> wherecond = (p) =>
-                {
-                    return string.IsNullOrEmpty(filter.ProductName) || p.ProductName.StartsWith(filter.ProductName);
-                };
 
-                var result = await unitofwork.Products.GetAsync(filter.Page, filter.PageSize, filter.OrderByFieldName, filter.OrderByDirection, wherecond);
-                var resultdto = mapper.Map<IEnumerable<Products>, IEnumerable<ProductsDTO>>(result);
-                return Ok(resultdto);
-            }
+            Func<Products, bool> wherecond = (p) =>
+            {
+                return string.IsNullOrEmpty(filter.ProductName) || p.ProductName.StartsWith(filter.ProductName);
+            };
+
+            var result = await unitofwork.Products.GetAsync(filter.Page, filter.PageSize, filter.OrderByFieldName, filter.OrderByDirection, wherecond);
+            var resultdto = mapper.Map<IEnumerable<Products>, IEnumerable<ProductsDTO>>(result);
+            return Ok(resultdto);
         }
 
         // GET api/products/5
@@ -63,12 +62,9 @@ namespace NProducts.WebApi.Controllers
         public ActionResult<ProductsDTO> Get(int id)
         {
             var mapper = GetProductsToProductsDTOMapper();
-            using (var unitofwork = new NorthwindUnitOfWork(this.configuration))
-            {
-                var result = unitofwork.Products.Get(id);
-                var dto = mapper.Map<Products, ProductsDTO>(result);
-                return Ok(dto);
-            }
+            var result = unitofwork.Products.Get(id);
+            var dto = mapper.Map<Products, ProductsDTO>(result);
+            return Ok(dto);
         }
 
         // POST api/products
@@ -77,36 +73,37 @@ namespace NProducts.WebApi.Controllers
         {
             IMapper mapper = GetProductsDTOtoProductsMapper();
             var p = mapper.Map<ProductsDTO, Products>(product);
-            using (var unitofwork = new NorthwindUnitOfWork(this.configuration))
-            {
-                unitofwork.Products.Create(p);
-                unitofwork.Save();
-                return Ok(p.ProductId);
-            }
+
+            unitofwork.Products.Create(p);
+            unitofwork.Save();
+            return Ok(p.ProductId);
+
         }
 
         // PUT api/products/5
+        /// <summary>
+        /// Updates Products with specified id the specified identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="product">The product.</param>
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] ProductsDTO product)
         {
+            var pinitial = unitofwork.Products.Get(product.ProductId);
+
             IMapper mapper = GetProductsDTOtoProductsMapper();
-            var p = mapper.Map<ProductsDTO, Products>(product);
-            using (var unitofwork = new NorthwindUnitOfWork(this.configuration))
-            {
-                unitofwork.Products.Update(p);
-                unitofwork.Save();
-            }
+            var p = mapper.Map<ProductsDTO, Products>(product, pinitial);
+
+            unitofwork.Products.Update(p);
+            unitofwork.Save();
         }
 
         // DELETE api/products/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            using (var unitofwork = new NorthwindUnitOfWork(this.configuration))
-            {
-                unitofwork.Products.Delete(id);
-                unitofwork.Save();
-            }
+            unitofwork.Products.Delete(id);
+            unitofwork.Save();
         }
 
         private static IMapper GetProductsDTOtoProductsMapper()

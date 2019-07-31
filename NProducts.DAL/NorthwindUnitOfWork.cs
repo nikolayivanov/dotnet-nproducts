@@ -5,21 +5,27 @@ using Microsoft.Extensions.Configuration;
 using System;
 using NProducts.DAL.Interfaces;
 using NProducts.Data.Models;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using NProducts.Data.Common;
 
 namespace NProducts.DAL
 {
-    public class NorthwindUnitOfWork : IDisposable
+    public class NorthwindUnitOfWork : IDisposable, IUnitOfWork
     {
         private bool disposed = false;
         private NorthwindContext db;
+        private IOptionsSnapshot<NProductsOptions> nproductsoptions;
         private IRepository<Products> productsRepository;
         private IRepository<Categories> categoriesRepository;
+        private IRepository<Suppliers> suppliersRepository;
 
-        public NorthwindUnitOfWork(IConfiguration configuration)
+        public NorthwindUnitOfWork(IConfiguration configuration, IOptionsSnapshot<NProductsOptions> nproductsoptions)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<NorthwindContext>();            
+            var optionsBuilder = new DbContextOptionsBuilder<NorthwindContext>();
             optionsBuilder.UseSqlServer(configuration.GetConnectionString("NorthwindDB"));
             this.db = new NorthwindContext(optionsBuilder.Options);
+            this.nproductsoptions = nproductsoptions;
         }
 
         public IRepository<Products> Products
@@ -27,7 +33,7 @@ namespace NProducts.DAL
             get
             {
                 if (productsRepository == null)
-                    productsRepository = new ProductsRepository(db);
+                    productsRepository = new ProductsRepository(db, this.nproductsoptions);
                 return productsRepository;
             }
         }
@@ -42,10 +48,25 @@ namespace NProducts.DAL
             }
         }
 
+        public IRepository<Suppliers> Suppliers
+        {
+            get
+            {
+                if (suppliersRepository == null)
+                    suppliersRepository = new SuppliersRepository(db);
+                return suppliersRepository;
+            }
+        }
+
         public void Save()
         {
             db.SaveChanges();
-        }       
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await db.SaveChangesAsync();
+        }
 
         public virtual void Dispose(bool disposing)
         {
@@ -63,6 +84,6 @@ namespace NProducts.DAL
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
+        }        
     }
 }

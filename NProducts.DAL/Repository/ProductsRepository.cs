@@ -9,6 +9,7 @@ using NProducts.DAL.Interfaces;
 using System.Linq;
 using System.Linq.Expressions;
 using NProducts.Data.Common;
+using Microsoft.Extensions.Options;
 
 namespace NProducts.DAL.Repository
 {
@@ -18,14 +19,16 @@ namespace NProducts.DAL.Repository
     public class ProductsRepository: IRepository<Products>
     {
         private NorthwindContext db;
+        private IOptions<NProductsOptions> nproductsoptions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductsRepository"/> class.
         /// </summary>
         /// <param name="db">The database.</param>
-        public ProductsRepository(NorthwindContext db)
+        public ProductsRepository(NorthwindContext db, IOptions<NProductsOptions> nproductsoptions)
         {
             this.db = db;
+            this.nproductsoptions = nproductsoptions;
         }
 
         public void Create(Products item)
@@ -67,6 +70,7 @@ namespace NProducts.DAL.Repository
 
         public void Update(Products item)
         {
+            db.Set<Products>().Attach(item);
             db.Entry(item).State = EntityState.Modified;
         }
 

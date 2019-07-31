@@ -10,6 +10,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using NProducts.WebApi.Models;
+using NProducts.DAL;
+using Microsoft.Extensions.Options;
+using NProducts.Data.Common;
 
 namespace NProducts.Tests.WebApi
 {
@@ -39,9 +42,11 @@ namespace NProducts.Tests.WebApi
 
         private ProductsController CreateProductsController()
         {
+            NProductsOptions options = new NProductsOptions() { PageSize = 20 };
+            IOptionsSnapshot<NProductsOptions> ioptions = Options.Create(options) as IOptionsSnapshot<NProductsOptions>;
             return new ProductsController(
                 this.mockLogger.Object,
-                this.configuration);
+                new NorthwindUnitOfWork(this.configuration, ioptions));
         }
 
         private ProductsDTO CreateTestProductsDto()
@@ -111,7 +116,7 @@ namespace NProducts.Tests.WebApi
         }
 
         [TestMethod]
-        public async Task Post_StateUnderTest_ExpectedBehavior()
+        public void Post_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
             var productsController = this.CreateProductsController();            

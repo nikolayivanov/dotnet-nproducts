@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NProducts.DAL\NProducts.DAL.csproj" />
+    <ProjectReference Include="..\NProducts.Data\NProducts.Data.csproj" />
   </ItemGroup>
 
 </Project>

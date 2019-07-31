@@ -10,7 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using NProducts.DAL;
+using NProducts.DAL.Interfaces;
+using NProducts.Data.Common;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace NProducts.WebApi
@@ -34,6 +36,9 @@ namespace NProducts.WebApi
             {
                 c.SwaggerDoc("v1", new Info { Title = "My NProducts API", Version = "v1" });
             });
+
+            services.Configure<NProductsOptions>(Configuration.GetSection("NproductsWebOptions"));
+            services.AddTransient<IUnitOfWork, NorthwindUnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

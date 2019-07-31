@@ -11,6 +11,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NProducts.DAL;
+using NProducts.DAL.Interfaces;
+using NProducts.Data.Common;
 using NProducts.Data.Context;
 
 namespace NProducts.Web
@@ -34,10 +36,11 @@ namespace NProducts.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.Configure<NProductsOptions>(Configuration.GetSection("NproductsWebOptions"));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddTransient<NorthwindUnitOfWork>();
+            services.AddTransient<IUnitOfWork, NorthwindUnitOfWork>();
 
             services.AddDbContext<NorthwindContext>(options => options.UseSqlServer(Configuration.GetConnectionString("NorthwindDB")));
         }
