@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,7 +10,9 @@ namespace NProducts.Web.Models
         public int ProductId { get; set; }
 
         [Required(ErrorMessage = "ProductName is required field.")]
+        [Remote(action: "VerifyProductName", controller: "Products")]
         public string ProductName { get; set; }
+
         public int? SupplierId { get; set; }
         [Display(Name = "Supplier")]
         public string SupplierCompanyName { get; set; }

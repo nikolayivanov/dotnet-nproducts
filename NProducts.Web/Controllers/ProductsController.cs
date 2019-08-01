@@ -52,6 +52,17 @@ namespace NProducts.Web.Controllers
             return View(products.ConvertToProductsDTO());
         }
 
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult VerifyProductName(string productname)
+        {
+            if (!string.IsNullOrEmpty(productname) && string.Compare(productname, "chai", true) == 0)
+            {
+                return Json($"ProductName {productname} is already in use.");
+            }
+
+            return Json(true);
+        }
+
         // GET: Products/Create
         public IActionResult Create()
         {
