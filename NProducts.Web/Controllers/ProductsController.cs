@@ -72,7 +72,7 @@ namespace NProducts.Web.Controllers
                 var p = products.ConvertToProducts();
                 this.unitofwork.Products.Create(p);
                 await this.unitofwork.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = p.ProductId });
             }
 
             ViewData["CategoryIdMy"] = new SelectList(this.unitofwork.Categories.GetAll(), "CategoryId", "CategoryName", products.CategoryId);
