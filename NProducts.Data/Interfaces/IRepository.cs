@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NProducts.DAL.Interfaces
+namespace NProducts.Data.Interfaces
 {
     public interface IRepository<T> where T : class
     {

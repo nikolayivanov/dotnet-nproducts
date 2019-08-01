@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NProducts.DAL.Interfaces;
 using NProducts.Data.Common;
-using NProducts.Data.Context;
+using NProducts.Data.Interfaces;
 using NProducts.Data.Models;
+using NProducts.Web.Models;
 
 namespace NProducts.Web.Controllers
 {
@@ -29,8 +30,9 @@ namespace NProducts.Web.Controllers
 
         // GET: Products
         public async Task<IActionResult> Index()
-        {            
-            return View(await this.unitofwork.Products.GetAsync(1, this.nproductsoptions.PageSize, string.Empty, string.Empty, (p) => true));
+        {
+            var items = await this.unitofwork.Products.GetAsync(1, this.nproductsoptions.PageSize, string.Empty, string.Empty, (p) => true);
+            return View(items.ConvertToProductsDTO());
         }
 
         // GET: Products/Details/5
@@ -47,13 +49,13 @@ namespace NProducts.Web.Controllers
                 return NotFound();
             }
 
-            return View(products);
+            return View(products.ConvertToProductsDTO());
         }
 
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(this.unitofwork.Categories.GetAll(), "CategoryId", "CategoryName");
+            ViewData["CategoryIdMy"] = new SelectList(this.unitofwork.Categories.GetAll(), "CategoryId", "CategoryName");
             ViewData["SupplierId"] = new SelectList(this.unitofwork.Suppliers.GetAll(), "SupplierId", "CompanyName");
             return View();
         }
@@ -63,15 +65,17 @@ namespace NProducts.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,ProductName,SupplierId,CategoryId,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Products products)
+        public async Task<IActionResult> Create(ProductsDTO products)
         {
             if (ModelState.IsValid)
             {
-                this.unitofwork.Products.Create(products);
+                var p = products.ConvertToProducts();
+                this.unitofwork.Products.Create(p);
                 await this.unitofwork.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(this.unitofwork.Categories.GetAll(), "CategoryId", "CategoryName", products.CategoryId);
+
+            ViewData["CategoryIdMy"] = new SelectList(this.unitofwork.Categories.GetAll(), "CategoryId", "CategoryName", products.CategoryId);
             ViewData["SupplierId"] = new SelectList(this.unitofwork.Suppliers.GetAll(), "SupplierId", "CompanyName", products.SupplierId);
             return View(products);
         }
@@ -89,9 +93,10 @@ namespace NProducts.Web.Controllers
             {
                 return NotFound();
             }
+
             ViewData["CategoryId"] = new SelectList(this.unitofwork.Categories.GetAll(), "CategoryId", "CategoryName", products.CategoryId);
-            ViewData["SupplierId"] = new SelectList(this.unitofwork.Suppliers.GetAll(), "SupplierId", "CompanyName", products.SupplierId);
-            return View(products);
+            ViewData["SupplierId"] = new SelectList(this.unitofwork.Suppliers.GetAll(), "SupplierId", "CompanyName", products.SupplierId);            
+            return View(products.ConvertToProductsDTO());
         }
 
         // POST: Products/Edit/5
@@ -99,7 +104,7 @@ namespace NProducts.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,SupplierId,CategoryId,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Products products)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,SupplierId,CategoryId,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] ProductsDTO products)
         {
             if (id != products.ProductId)
             {
@@ -110,7 +115,8 @@ namespace NProducts.Web.Controllers
             {
                 try
                 {
-                    this.unitofwork.Products.Update(products);
+                    var p = products.ConvertToProducts();
+                    this.unitofwork.Products.Update(p);
                     await this.unitofwork.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -126,6 +132,7 @@ namespace NProducts.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["CategoryId"] = new SelectList(this.unitofwork.Categories.GetAll(), "CategoryId", "CategoryName", products.CategoryId);
             ViewData["SupplierId"] = new SelectList(this.unitofwork.Suppliers.GetAll(), "SupplierId", "CompanyName", products.SupplierId);
             return View(products);
@@ -145,7 +152,7 @@ namespace NProducts.Web.Controllers
                 return NotFound();
             }
 
-            return View(products);
+            return View(products.ConvertToProductsDTO());
         }
 
         // POST: Products/Delete/5
@@ -161,6 +168,6 @@ namespace NProducts.Web.Controllers
         private bool ProductsExists(int id)
         {
             return this.unitofwork.Products.Get(id) != null;
-        }
+        }        
     }
 }

@@ -1,14 +1,14 @@
-﻿using NProducts.Data.Context;
-using NProducts.Data.Models;
+﻿using NProducts.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using NProducts.DAL.Interfaces;
 using System.Linq;
 using System.Linq.Expressions;
 using NProducts.Data.Common;
+using NProducts.DAL.Context;
+using NProducts.Data.Interfaces;
 
 namespace NProducts.DAL.Repository
 {

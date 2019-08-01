@@ -11,8 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NProducts.DAL;
-using NProducts.DAL.Interfaces;
 using NProducts.Data.Common;
+using NProducts.Data.Interfaces;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace NProducts.WebApi

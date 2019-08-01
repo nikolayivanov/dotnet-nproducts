@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 
-namespace NProducts.Data.Context
+namespace NProducts.DAL.Context
 {
     public partial class NorthwindContext : DbContext
     {

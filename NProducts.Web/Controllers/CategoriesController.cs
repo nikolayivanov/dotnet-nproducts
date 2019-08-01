@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NProducts.DAL;
-using NProducts.DAL.Interfaces;
-using NProducts.Data.Context;
+using NProducts.Data.Interfaces;
 using NProducts.Data.Models;
+using NProducts.Web.Models;
 
 namespace NProducts.Web.Controllers
 {
@@ -28,7 +28,8 @@ namespace NProducts.Web.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await unitofwork.Categories.GetAllAsync());
+            var items = await unitofwork.Categories.GetAllAsync();
+            return View(items.ConvertToCategoriesDTO());
         }
 
         // GET: Categories/Details/5
@@ -45,7 +46,7 @@ namespace NProducts.Web.Controllers
                 return NotFound();
             }
 
-            return View(categories);
+            return View(categories.ConvertToCategoriesDTO());
 
         }
 
@@ -60,11 +61,12 @@ namespace NProducts.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,Description,Picture")] Categories categories)
+        public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,Description,Picture")] CategoriesDTO categories)
         {
             if (ModelState.IsValid)
             {
-                this.unitofwork.Categories.Create(categories);
+                var c = categories.ConvertToCategories();
+                this.unitofwork.Categories.Create(c);
                 await this.unitofwork.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -85,7 +87,7 @@ namespace NProducts.Web.Controllers
             {
                 return NotFound();
             }
-            return View(categories);
+            return View(categories.ConvertToCategoriesDTO());
         }
 
         // POST: Categories/Edit/5
@@ -93,7 +95,7 @@ namespace NProducts.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName,Description,Picture")] Categories categories)
+        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName,Description,Picture")] CategoriesDTO categories)
         {
             if (id != categories.CategoryId)
             {
@@ -104,7 +106,7 @@ namespace NProducts.Web.Controllers
             {
                 try
                 {
-                    this.unitofwork.Categories.Update(categories);
+                    this.unitofwork.Categories.Update(categories.ConvertToCategories());
                     await this.unitofwork.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -137,7 +139,7 @@ namespace NProducts.Web.Controllers
                 return NotFound();
             }
 
-            return View(categories);
+            return View(categories.ConvertToCategoriesDTO());
         }
 
         // POST: Categories/Delete/5

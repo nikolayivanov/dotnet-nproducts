@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using NProducts.DAL;
-using NProducts.DAL.Interfaces;
+using NProducts.Data.Interfaces;
 using NProducts.Data.Models;
 using NProducts.WebApi.DTO;
 using NProducts.WebApi.Models;
@@ -40,16 +38,13 @@ namespace NProducts.WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedCollectionResponse<ProductsDTO>>> Get([FromQuery]ProductsFilterModel filter)
         {
-            var mapper = GetProductsToProductsDTOMapper();
-
             Func<Products, bool> wherecond = (p) =>
             {
                 return string.IsNullOrEmpty(filter.ProductName) || p.ProductName.StartsWith(filter.ProductName);
             };
 
-            var result = await unitofwork.Products.GetAsync(filter.Page, filter.PageSize, filter.OrderByFieldName, filter.OrderByDirection, wherecond);
-            var resultdto = mapper.Map<IEnumerable<Products>, IEnumerable<ProductsDTO>>(result);
-            return Ok(resultdto);
+            var result = await unitofwork.Products.GetAsync(filter.Page, filter.PageSize, filter.OrderByFieldName, filter.OrderByDirection, wherecond);            
+            return Ok(result.ConvertToProductsDTOList());
         }
 
         // GET api/products/5
@@ -61,19 +56,35 @@ namespace NProducts.WebApi.Controllers
         [HttpGet("{id}")]
         public ActionResult<ProductsDTO> Get(int id)
         {
-            var mapper = GetProductsToProductsDTOMapper();
-            var result = unitofwork.Products.Get(id);
-            var dto = mapper.Map<Products, ProductsDTO>(result);
-            return Ok(dto);
+            if (id <= 0)
+            {
+                ModelState.AddModelError("id.incorrect", $"id {id} has incorrect value.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            var result = unitofwork.Products.Get(id);            
+            return Ok(result.ConvertToProductsDTO());
         }
 
         // POST api/products
+        /// <summary>
+        /// Creates the specified product.
+        /// </summary>
+        /// <param name="product">The product.</param>
+        /// <returns>Returns Id of new products.</returns>
         [HttpPost]
         public ActionResult<int> Post([FromBody] ProductsDTO product)
         {
-            IMapper mapper = GetProductsDTOtoProductsMapper();
-            var p = mapper.Map<ProductsDTO, Products>(product);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var p = product.ConvertToProducts();
             unitofwork.Products.Create(p);
             unitofwork.Save();
             return Ok(p.ProductId);
@@ -87,47 +98,45 @@ namespace NProducts.WebApi.Controllers
         /// <param name="id">The identifier.</param>
         /// <param name="product">The product.</param>
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] ProductsDTO product)
+        public ActionResult Put(int id, [FromBody] ProductsDTO product)
         {
-            var pinitial = unitofwork.Products.Get(product.ProductId);
+            if (id <= 0)
+            {
+                ModelState.AddModelError("id.incorrect", $"id {id} has incorrect value.");
+            }
 
-            IMapper mapper = GetProductsDTOtoProductsMapper();
-            var p = mapper.Map<ProductsDTO, Products>(product, pinitial);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var pinitial = unitofwork.Products.Get(product.ProductId);
+            var p = product.ConvertToProducts(pinitial);
 
             unitofwork.Products.Update(p);
             unitofwork.Save();
+
+            return Ok();
         }
 
         // DELETE api/products/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
+            if (id <= 0)
+            {
+                ModelState.AddModelError("id.incorrect", $"id {id} has incorrect value.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             unitofwork.Products.Delete(id);
             unitofwork.Save();
-        }
 
-        private static IMapper GetProductsDTOtoProductsMapper()
-        {
-            // Настройка AutoMapper
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<ProductsDTO, Products>();
-            });
-
-            var mapper = config.CreateMapper();
-            return mapper;
-        }
-
-        private static IMapper GetProductsToProductsDTOMapper()
-        {
-            // Настройка AutoMapper
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Products, ProductsDTO>();
-            });
-
-            var mapper = config.CreateMapper();
-            return mapper;
+            return Ok();
         }
     }
 }

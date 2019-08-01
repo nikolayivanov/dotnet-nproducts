@@ -1,13 +1,13 @@
 ﻿using NProducts.DAL.Repository;
-using NProducts.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
-using NProducts.DAL.Interfaces;
 using NProducts.Data.Models;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using NProducts.Data.Common;
+using NProducts.DAL.Context;
+using NProducts.Data.Interfaces;
 
 namespace NProducts.DAL
 {

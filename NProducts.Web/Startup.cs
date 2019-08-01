@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NProducts.DAL;
-using NProducts.DAL.Interfaces;
+using NProducts.DAL.Context;
 using NProducts.Data.Common;
-using NProducts.Data.Context;
+using NProducts.Data.Interfaces;
 
 namespace NProducts.Web
 {

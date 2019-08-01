@@ -1,4 +1,4 @@
-﻿@model NProducts.Data.Models.Categories
+﻿@model NProducts.Web.Models.CategoriesDTO
 
 @{
     ViewData["Title"] = "Delete";
@@ -24,12 +24,7 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Picture)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Picture)
-        </dd>
+        
     </dl>
     
     <form asp-action="Delete">

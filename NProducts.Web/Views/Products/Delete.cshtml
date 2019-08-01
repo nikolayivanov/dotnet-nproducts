@@ -1,4 +1,4 @@
-﻿@model NProducts.Data.Models.Products
+﻿@model NProducts.Web.Models.ProductsDTO
 
 @{
     ViewData["Title"] = "Delete";
@@ -55,16 +55,16 @@
             @Html.DisplayFor(model => model.Discontinued)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
+            @Html.DisplayNameFor(model => model.CategoryName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.CategoryName)
+            @Html.DisplayFor(model => model.CategoryName)
         </dd class>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Supplier)
+            @Html.DisplayNameFor(model => model.SupplierCompanyName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Supplier.CompanyName)
+            @Html.DisplayFor(model => model.SupplierCompanyName)
         </dd class>
     </dl>
     
