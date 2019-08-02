@@ -38,7 +38,12 @@ namespace NProducts.Web.Controllers
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id.Value == 999)
+            {
+                throw new Exception("My custom test exception.");
+            }
+
+            if (!id.HasValue)
             {
                 return NotFound();
             }
@@ -83,6 +88,7 @@ namespace NProducts.Web.Controllers
                 var p = products.ConvertToProducts();
                 this.unitofwork.Products.Create(p);
                 await this.unitofwork.SaveChangesAsync();
+                this.logger.LogInformation($"New product was created ProductId=[{p.ProductId}] ProductName=[{products.ProductName}]");
                 return RedirectToAction(nameof(Details), new { id = p.ProductId });
             }
 
@@ -130,7 +136,7 @@ namespace NProducts.Web.Controllers
                     this.unitofwork.Products.Update(p);
                     await this.unitofwork.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!ProductsExists(products.ProductId))
                     {
@@ -138,6 +144,7 @@ namespace NProducts.Web.Controllers
                     }
                     else
                     {
+                        logger.LogError(ex, "An error occurred during product edit.");
                         throw;
                     }
                 }

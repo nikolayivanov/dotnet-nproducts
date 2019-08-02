@@ -87,8 +87,10 @@ namespace NProducts.WebApi.Controllers
             var p = product.ConvertToProducts();
             unitofwork.Products.Create(p);
             unitofwork.Save();
+            this.logger.LogInformation("New product was created ProductId=[{p.ProductId}] ProductName=[{product.ProductName}]", p.ProductId, product.ProductName);
+            this.logger.LogInformation(new EventId(123, "Product was created successfully."),
+                "New product was created ProductId=[{p.ProductId}] ProductName=[{product.ProductName}]", p.ProductId, product.ProductName);
             return Ok(p.ProductId);
-
         }
 
         // PUT api/products/5
