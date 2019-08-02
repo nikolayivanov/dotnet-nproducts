@@ -14,11 +14,23 @@ namespace NProducts.WebApi
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args).Build();
+
+            var logger = (ILogger<Program>)host.Services.GetService(typeof(ILogger<Program>));
+            logger.LogInformation("Application started.");
+
+            host.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    // Requires `using Microsoft.Extensions.Logging;`
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddConsole();
+                    logging.AddDebug();                    
+                });
     }
 }

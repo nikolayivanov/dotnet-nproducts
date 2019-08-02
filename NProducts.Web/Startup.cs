@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NProducts.DAL;
 using NProducts.DAL.Context;
 using NProducts.Data.Common;
@@ -46,11 +44,27 @@ namespace NProducts.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddFile("SeriLogs/nproducts.{Date}.txt");
+            logger.LogInformation("Application path: {ContentRootPath}", env.ContentRootPath);
+            using (logger.BeginScope("Application Configuration:"))
+            {
+                var strbuilder = new StringBuilder();
+                foreach (var val in Configuration.AsEnumerable())
+                {
+                    strbuilder.AppendLine($"{val.Key} - {val.Value}");
+                    logger.LogInformation("{key} - {value}", val.Key, val.Value);
+                }
+
+                logger.LogInformation(strbuilder.ToString());
+            }
+
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage(new DeveloperExceptionPageOptions() {
+                    SourceCodeLineCount = 10
+                });
             }
             else
             {

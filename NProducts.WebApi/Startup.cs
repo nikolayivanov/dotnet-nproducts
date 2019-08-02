@@ -42,10 +42,19 @@ namespace NProducts.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
+                logger.LogInformation("Application path: {ContentRootPath}", env.ContentRootPath);
+                using (logger.BeginScope("Application Configuration:"))
+                {
+                    foreach (var val in Configuration.AsEnumerable())
+                    {
+                        logger.LogInformation("{key} - {value}", val.Key, val.Value);
+                    }
+                }
+
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -68,7 +77,7 @@ namespace NProducts.WebApi
             });
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvc();            
         }
     }
 }
