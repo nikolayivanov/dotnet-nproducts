@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using NProducts.Data.Common;
 using NProducts.Data.Interfaces;
 using NProducts.Data.Models;
+using NProducts.Web.Filters;
 using NProducts.Web.Models;
 
 namespace NProducts.Web.Controllers
@@ -81,6 +82,7 @@ namespace NProducts.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ServiceFilter(typeof(LogActionAttribute))]                
         public async Task<IActionResult> Create(ProductsDTO products)
         {
             if (ModelState.IsValid)
