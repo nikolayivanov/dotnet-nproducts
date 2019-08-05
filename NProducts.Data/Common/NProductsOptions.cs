@@ -8,5 +8,6 @@ namespace NProducts.Data.Common
     public class NProductsOptions
     {
         public int PageSize { get; set; }
+        public bool LogActionParameters { get; set; }
     }
 }
