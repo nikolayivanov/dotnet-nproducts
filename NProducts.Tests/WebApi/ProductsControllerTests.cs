@@ -13,6 +13,7 @@ using NProducts.WebApi.Models;
 using NProducts.DAL;
 using Microsoft.Extensions.Options;
 using NProducts.Data.Common;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace NProducts.Tests.WebApi
 {
@@ -21,7 +22,7 @@ namespace NProducts.Tests.WebApi
     {
         private MockRepository mockRepository;
 
-        private Mock<ILogger<ProductsController>> mockLogger;
+        private ILogger<ProductsController> logger;
         private Mock<IConfiguration> mockConfiguration;
         private IConfiguration configuration;
 
@@ -30,8 +31,19 @@ namespace NProducts.Tests.WebApi
         {
             this.configuration = TestHelper.GetIConfiguration();
             this.mockRepository = new MockRepository(MockBehavior.Strict);
-            this.mockLogger = this.mockRepository.Create<ILogger<ProductsController>>();
-            this.mockConfiguration = this.mockRepository.Create<IConfiguration>();            
+            this.logger = CreateLogger();
+            this.mockConfiguration = this.mockRepository.Create<IConfiguration>();
+        }
+
+        private ILogger<ProductsController> CreateLogger()
+        {
+            var serviceProvider = new ServiceCollection()
+            .AddLogging()
+            .BuildServiceProvider();
+
+            var factory = serviceProvider.GetService<ILoggerFactory>();
+
+            return factory.CreateLogger<ProductsController>();
         }
 
         [TestCleanup]
@@ -45,7 +57,7 @@ namespace NProducts.Tests.WebApi
             NProductsOptions options = new NProductsOptions() { PageSize = 20 };
             IOptionsSnapshot<NProductsOptions> ioptions = Options.Create(options) as IOptionsSnapshot<NProductsOptions>;
             return new ProductsController(
-                this.mockLogger.Object,
+                this.logger,
                 new NorthwindUnitOfWork(this.configuration, ioptions));
         }
 
