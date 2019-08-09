@@ -42,3 +42,11 @@ steps:
       !**\*TestAdapter.dll
       !**\obj\**
     searchFolder: '$(System.DefaultWorkingDirectory)'
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    vstsFeed: '78203d96-c66f-4c20-8626-79944eb1823f'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '78203d96-c66f-4c20-8626-79944eb1823f'
