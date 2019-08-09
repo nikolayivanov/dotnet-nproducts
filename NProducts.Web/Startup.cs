@@ -44,10 +44,8 @@ namespace NProducts.Web
 
             services.AddTransient<IUnitOfWork, NorthwindUnitOfWork>();
 
-            services.AddDbContext<NorthwindContext>(options => 
-            options.UseSqlServer(
-                Configuration.GetConnectionString("NorthwindDB"), 
-                b => b.MigrationsAssembly("NProducts.Web")));
+            services.AddDbContext<NorthwindContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("NorthwindDB")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NProducts.DAL.Context;
 
-namespace NProducts.Web.Migrations
+namespace NProducts.DAL.Migrations
 {
     [DbContext(typeof(NorthwindContext))]
-    [Migration("20190809054154_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20190809095247_AddIsSoupForProducts")]
+    partial class AddIsSoupForProducts
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -333,6 +333,8 @@ namespace NProducts.Web.Migrations
                         .HasColumnName("CategoryID");
 
                     b.Property<bool>("Discontinued");
+
+                    b.Property<bool>("IsSoup");
 
                     b.Property<string>("ProductName")
                         .IsRequired()

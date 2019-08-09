@@ -24,7 +24,7 @@ namespace NProducts.DAL
         {
             var optionsBuilder = new DbContextOptionsBuilder<NorthwindContext>();
             var connstr = configuration.GetConnectionString("NorthwindDB");
-            optionsBuilder.UseSqlServer(connstr, b => b.MigrationsAssembly("NProducts.Web"));
+            optionsBuilder.UseSqlServer(connstr);
 
             this.db = new NorthwindContext(optionsBuilder.Options);
             this.nproductsoptions = nproductsoptions;
@@ -32,7 +32,7 @@ namespace NProducts.DAL
 
         public void InitialDatabaseForUnitTests()
         {
-            // Create the schema in the database
+            // Create the schema in the database            
             this.db.Database.Migrate();
         }
 
