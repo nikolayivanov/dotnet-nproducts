@@ -22,8 +22,7 @@ namespace NProducts.Tests.WebApi
     {
         private MockRepository mockRepository;
 
-        private ILogger<ProductsController> logger;
-        private Mock<IConfiguration> mockConfiguration;
+        private ILogger<ProductsController> logger;        
         private IConfiguration configuration;
 
         [TestInitialize]
@@ -32,7 +31,9 @@ namespace NProducts.Tests.WebApi
             this.configuration = TestHelper.GetIConfiguration();
             this.mockRepository = new MockRepository(MockBehavior.Strict);
             this.logger = CreateLogger();
-            this.mockConfiguration = this.mockRepository.Create<IConfiguration>();
+
+            var unnitofwork = GetNorthwindUnitOfWork();
+            unnitofwork.InitialDatabaseForUnitTests();
         }
 
         private ILogger<ProductsController> CreateLogger()
@@ -53,12 +54,17 @@ namespace NProducts.Tests.WebApi
         }
 
         private ProductsController CreateProductsController()
+        {            
+            return new ProductsController(
+                this.logger,
+                GetNorthwindUnitOfWork());
+        }
+
+        private NorthwindUnitOfWork GetNorthwindUnitOfWork()
         {
             NProductsOptions options = new NProductsOptions() { PageSize = 20 };
             IOptionsSnapshot<NProductsOptions> ioptions = Options.Create(options) as IOptionsSnapshot<NProductsOptions>;
-            return new ProductsController(
-                this.logger,
-                new NorthwindUnitOfWork(this.configuration, ioptions));
+            return new NorthwindUnitOfWork(this.configuration, ioptions);
         }
 
         private ProductsDTO CreateTestProductsDto()
@@ -100,12 +106,14 @@ namespace NProducts.Tests.WebApi
         {
             // Arrange
             var productsController = this.CreateProductsController();
+            ProductsDTO product = CreateTestProductsDto();            
+            productsController.Post(product);
 
             var filter = new ProductsFilterModel()
             {
                 Page = 1,
                 PageSize = 20,
-                ProductName = "",
+                ProductName = "My",
                 OrderByDirection = "DESC",
                 OrderByFieldName = "ProductName"
             };

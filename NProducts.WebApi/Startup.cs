@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NProducts.DAL;
+using NProducts.DAL.Context;
 using NProducts.Data.Common;
 using NProducts.Data.Interfaces;
 using Swashbuckle.AspNetCore.Swagger;
@@ -39,6 +41,8 @@ namespace NProducts.WebApi
 
             services.Configure<NProductsOptions>(Configuration.GetSection("NproductsWebOptions"));
             services.AddTransient<IUnitOfWork, NorthwindUnitOfWork>();
+
+            services.AddDbContext<NorthwindContext>(options => options.UseSqlServer(Configuration.GetConnectionString("NorthwindDB"), b => b.MigrationsAssembly("NProducts.WebApi")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

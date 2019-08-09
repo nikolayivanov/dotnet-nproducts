@@ -23,9 +23,17 @@ namespace NProducts.DAL
         public NorthwindUnitOfWork(IConfiguration configuration, IOptionsSnapshot<NProductsOptions> nproductsoptions)
         {
             var optionsBuilder = new DbContextOptionsBuilder<NorthwindContext>();
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("NorthwindDB"));
+            var connstr = configuration.GetConnectionString("NorthwindDB");
+            optionsBuilder.UseSqlServer(connstr, b => b.MigrationsAssembly("NProducts.Web"));
+
             this.db = new NorthwindContext(optionsBuilder.Options);
             this.nproductsoptions = nproductsoptions;
+        }
+
+        public void InitialDatabaseForUnitTests()
+        {
+            // Create the schema in the database
+            this.db.Database.Migrate();
         }
 
         public IRepository<Products> Products
