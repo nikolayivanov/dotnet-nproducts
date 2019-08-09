@@ -91,6 +91,9 @@ namespace NProducts.Tests.WebApi
                 OrderByFieldName= "ProductName"
             };
 
+            ProductsDTO product = CreateTestProductsDto();
+            productsController.Post(product);
+
             // Act
             var result = await productsController.Get(filter);
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
