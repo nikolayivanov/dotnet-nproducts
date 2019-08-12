@@ -15,8 +15,7 @@ namespace NProducts.WebApi.Controllers
 {
     /// <summary>
     /// RESTful service for products in Northwind database.
-    /// </summary>
-    /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
+    /// </summary>    
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
