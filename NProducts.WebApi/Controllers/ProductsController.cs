@@ -30,8 +30,8 @@ namespace NProducts.WebApi.Controllers
             this.unitofwork = unitofwork;
         }
 
-        // GET api/products
         /// <summary>
+        /// GET api/products
         /// Gets this all products.
         /// </summary>
         /// <returns>List of all products in the database</returns>
@@ -47,8 +47,8 @@ namespace NProducts.WebApi.Controllers
             return Ok(result.ConvertToProductsDTOList());
         }
 
-        // GET api/products/5
         /// <summary>
+        /// GET api/products/5
         /// Gets a products with the specified identifier.
         /// </summary>
         /// <param name="id">The product identifier.</param>
@@ -70,8 +70,8 @@ namespace NProducts.WebApi.Controllers
             return Ok(result.ConvertToProductsDTO());
         }
 
-        // POST api/products
         /// <summary>
+        /// POST api/products
         /// Creates the specified product.
         /// </summary>
         /// <param name="product">The product.</param>
@@ -93,8 +93,8 @@ namespace NProducts.WebApi.Controllers
             return Ok(p.ProductId);
         }
 
-        // PUT api/products/5
         /// <summary>
+        /// PUT api/products/5
         /// Updates Products with specified id the specified identifier.
         /// </summary>
         /// <param name="id">The identifier.</param>
@@ -121,7 +121,12 @@ namespace NProducts.WebApi.Controllers
             return Ok();
         }
 
-        // DELETE api/products/5
+        /// <summary>
+        /// DELETE api/products/5
+        /// Deletes the product with specified identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
