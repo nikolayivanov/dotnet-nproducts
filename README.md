@@ -4,8 +4,8 @@ Web application and Web API for Northwind products management.
 
 ## Описание проектов
 * NProducts.Data - базовый проект с классами моделями БД, интерфейсами
-* NProducts.DAL - слой доступа к данным
+* NProducts.DAL - слой доступа к данным. Код репозиториев, код unitofwork.
 * NProducts.BLL - 
-* NProducts.Web - asp.net core web app сайт для просмотра категорий и продуктов
+* NProducts.Web - asp.net core web app сайт для просмотра категорий и продуктов. Используем IUnitOfWork для доступа к данным. Содержит свои DTO и используем [automapper](https://metanit.com/sharp/mvc5/23.4.php)  для маппинга DTO в db модели
 * NProducts.WebApi - ASP.NET Core WebAPI с RESTful сервисом для Products
 * NProducts.Tests - проект с тестами для обоих веб приложений Web and WebApi
