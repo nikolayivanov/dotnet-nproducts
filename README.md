@@ -2,6 +2,10 @@
 # dotnet-nproducts
 Web application and Web API for Northwind products management.
 
+## Цели для себя
+* paging, sorting
+* react
+
 ## База данных
 Для работы с проектом и для его запуска нужна БД Northwind. 
 Создаем ее локально просто запуском [sql script](https://raw.githubusercontent.com/microsoft/sql-server-samples/master/samples/databases/northwind-pubs/instnwnd.sql)
@@ -13,3 +17,10 @@ Web application and Web API for Northwind products management.
 * NProducts.Web - asp.net core web app сайт для просмотра категорий и продуктов. Используем IUnitOfWork для доступа к данным. Содержит свои DTO и используем [automapper](https://metanit.com/sharp/mvc5/23.4.php)  для маппинга DTO в db модели
 * NProducts.WebApi - ASP.NET Core WebAPI с RESTful сервисом для Products
 * NProducts.Tests - проект с тестами для обоих веб приложений Web and WebApi
+
+## Архитектурные решения
+* Послойная архитектура - веб сайт и рест сервисы не работают напрямую с EF
+* DTO - Data Transfer Objects - вьюхи сайта или методы rest сервиса работают только через DTO. DTO классы это по сути модели и они хранятся в проекте сайта
+* AutoMapper - для маппинга сущностей модели в DTO. Есть Mapping классы и они через extension methods c# фичу добавляют методы типа .ConvertToProducts .ConvertToProductsDTO
+* [UnitOfWork](https://metanit.com/sharp/mvc5/23.7.php) - работа с данными только через этот класс
+* Generic Repository - для каждой сущности в БД свой репозиторий который реализует интерфейс IRepository<T> например [ProductsRepository](https://github.com/nikolayivanov/dotnet-nproducts/blob/master/NProducts.DAL/Repository/ProductsRepository.cs)
