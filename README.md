@@ -2,6 +2,10 @@
 # dotnet-nproducts
 Web application and Web API for Northwind products management.
 
+## База данных
+Для работы с проектом и для его запуска нужна БД Northwind. 
+Создаем ее локально просто запуском [sql script](https://raw.githubusercontent.com/microsoft/sql-server-samples/master/samples/databases/northwind-pubs/instnwnd.sql)
+
 ## Описание проектов
 * NProducts.Data - базовый проект с классами моделями БД, интерфейсами
 * NProducts.DAL - слой доступа к данным. Код репозиториев, код unitofwork.
