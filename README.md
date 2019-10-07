@@ -2,7 +2,7 @@
 # dotnet-nproducts
 Web application and Web API for Northwind products management.
 
-# Описание проектов
+## Описание проектов
 * NProducts.Data - базовый проект с классами моделями БД, интерфейсами
 * NProducts.DAL - слой доступа к данным
 * NProducts.BLL - 
