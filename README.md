@@ -24,3 +24,6 @@ Web application and Web API for Northwind products management.
 * AutoMapper - для маппинга сущностей модели в DTO. Есть Mapping классы и они через extension methods c# фичу добавляют методы типа .ConvertToProducts .ConvertToProductsDTO
 * [UnitOfWork](https://metanit.com/sharp/mvc5/23.7.php) - работа с данными только через этот класс
 * Generic Repository - для каждой сущности в БД свой репозиторий который реализует интерфейс IRepository<T> например [ProductsRepository](https://github.com/nikolayivanov/dotnet-nproducts/blob/master/NProducts.DAL/Repository/ProductsRepository.cs)
+
+## Дополнительные фичи
+* LogActionAttribute - атрибут для записи вызова какого то экшина в лог файл. Можно отключить логгинг параметров через AppSettings.json
