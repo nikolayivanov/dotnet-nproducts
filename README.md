@@ -5,6 +5,7 @@ Web application and Web API for Northwind products management.
 ## Цели для себя
 * paging, sorting
 * react
+* Azure DevOps использовать для CI, task tracking
 
 ## База данных
 Для работы с проектом и для его запуска нужна БД Northwind. 
