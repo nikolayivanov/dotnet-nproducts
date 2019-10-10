@@ -26,5 +26,9 @@ Web application and Web API for Northwind products management.
 * [UnitOfWork](https://metanit.com/sharp/mvc5/23.7.php) - работа с данными только через этот класс
 * Generic Repository - для каждой сущности в БД свой репозиторий который реализует интерфейс IRepository<T> например [ProductsRepository](https://github.com/nikolayivanov/dotnet-nproducts/blob/master/NProducts.DAL/Repository/ProductsRepository.cs)
 
+## Unit tests
+* Тесты больше интеграционные так как в них используется БД. Для того чтобы тесты проходили в Azure DevOps использую SQL Lite. Проект с тестами имеет свой AppSettings.json
+* Имена для тестов MethodName_StateUnderTest_ExpectedBehavior [описание какие возможны варианты наименования тестовых методов](https://dzone.com/articles/7-popular-unit-test-naming)
+
 ## Дополнительные фичи
 * LogActionAttribute - атрибут для записи вызова какого то экшина в лог файл. Можно отключить логгинг параметров через AppSettings.json
