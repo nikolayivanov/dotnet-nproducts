@@ -3,6 +3,7 @@
 Web application and Web API for Northwind products management.
 
 ## Цели для себя
+* RESTful WebApi
 * paging, sorting
 * react
 * Azure DevOps использовать для CI, task tracking
