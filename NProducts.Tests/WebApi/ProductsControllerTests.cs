@@ -14,22 +14,20 @@ using NProducts.DAL;
 using Microsoft.Extensions.Options;
 using NProducts.Data.Common;
 using Microsoft.Extensions.DependencyInjection;
+using NProducts.Tests.Extentions;
 
 namespace NProducts.Tests.WebApi
 {
     [TestClass]
     public class ProductsControllerTests
     {
-        private MockRepository mockRepository;
-
         private ILogger<ProductsController> logger;        
         private IConfiguration configuration;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            this.configuration = TestHelper.GetIConfiguration();
-            this.mockRepository = new MockRepository(MockBehavior.Strict);
+            this.configuration = TestHelper.GetIConfiguration();            
             this.logger = CreateLogger();
 
             var unnitofwork = GetNorthwindUnitOfWork();
@@ -51,34 +49,10 @@ namespace NProducts.Tests.WebApi
         public void TestCleanup()
         {
             //this.mockRepository.VerifyAll();
-        }
-
-        private ProductsController CreateProductsController()
-        {            
-            return new ProductsController(
-                this.logger,
-                GetNorthwindUnitOfWork());
-        }
-
-        private NorthwindUnitOfWork GetNorthwindUnitOfWork()
-        {
-            NProductsOptions options = new NProductsOptions() { PageSize = 20 };
-            IOptionsSnapshot<NProductsOptions> ioptions = Options.Create(options) as IOptionsSnapshot<NProductsOptions>;
-            return new NorthwindUnitOfWork(this.configuration, ioptions);
-        }
-
-        private ProductsDTO CreateTestProductsDto()
-        {
-            return new ProductsDTO()
-            {
-                ProductName = "My first product",
-                QuantityPerUnit = "1 in big container",
-                UnitPrice = 12
-            };
-        }
+        }        
 
         [TestMethod]
-        public async Task Get_StateUnderTest_ExpectedBehavior()
+        public async Task Get_ReturnsOkObjectResult_WhenPassFilterModelWithEmptyProductName()
         {
             // Arrange
             var productsController = this.CreateProductsController();
@@ -96,16 +70,15 @@ namespace NProducts.Tests.WebApi
 
             // Act
             var result = await productsController.Get(filter);
-            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
-            var ok = result.Result as OkObjectResult;
-            var list = ok.Value as IEnumerable<ProductsDTO>;
 
             // Assert
+            var ok = MyAssert.IsType<OkObjectResult>(result.Result);
+            var list = ok.Value as IEnumerable<ProductsDTO>;
             Assert.IsTrue(list != null && list.Any());
         }
 
         [TestMethod]
-        public async Task Get_StateUnderTest_ExpectedBehavior1()
+        public async Task Get_ReturnsOkObjectResult_WhenPassFilterModelWithValueInProductName()
         {
             // Arrange
             var productsController = this.CreateProductsController();
@@ -139,7 +112,7 @@ namespace NProducts.Tests.WebApi
         }
 
         [TestMethod]
-        public void Post_StateUnderTest_ExpectedBehavior()
+        public void Post_ReturnsOkObjectResultWithNewIntIdValue_WhenPassCorrectProductDTO()
         {
             // Arrange
             var productsController = this.CreateProductsController();            
@@ -157,7 +130,7 @@ namespace NProducts.Tests.WebApi
         }
 
         [TestMethod]
-        public void Put_StateUnderTest_ExpectedBehavior()
+        public void Put_ReturnsOkObjectResultWithIntId_WhenPassAndExistingProductDTO()
         {
             // Arrange
             var productsController = this.CreateProductsController();
@@ -178,16 +151,8 @@ namespace NProducts.Tests.WebApi
             Assert.AreEqual(updatedname, pupdated.ProductName);
         }
 
-        private static ProductsDTO GetDtoById(ProductsController productsController, int productid)
-        {
-            var result = productsController.Get(productid);
-            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
-            var p = (result.Result as OkObjectResult).Value as ProductsDTO;
-            return p;
-        }
-
         [TestMethod]
-        public void Delete_StateUnderTest_ExpectedBehavior()
+        public void Delete_ReturnsOkObjectResult_WhenPassExistingProductId()
         {
             ProductsDTO product = CreateTestProductsDto();
             
@@ -203,5 +168,41 @@ namespace NProducts.Tests.WebApi
             // Assert
             Assert.IsNull(p);
         }
+
+        #region Helper methods
+
+        private ProductsController CreateProductsController()
+        {
+            return new ProductsController(
+                this.logger,
+                GetNorthwindUnitOfWork());
+        }
+
+        private NorthwindUnitOfWork GetNorthwindUnitOfWork()
+        {
+            NProductsOptions options = new NProductsOptions() { PageSize = 20 };
+            IOptionsSnapshot<NProductsOptions> ioptions = Options.Create(options) as IOptionsSnapshot<NProductsOptions>;
+            return new NorthwindUnitOfWork(this.configuration, ioptions);
+        }
+
+        private ProductsDTO CreateTestProductsDto()
+        {
+            return new ProductsDTO()
+            {
+                ProductName = "My first product",
+                QuantityPerUnit = "1 in big container",
+                UnitPrice = 12
+            };
+        }
+
+        private static ProductsDTO GetDtoById(ProductsController productsController, int productid)
+        {
+            var result = productsController.Get(productid);
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            var p = (result.Result as OkObjectResult).Value as ProductsDTO;
+            return p;
+        }
+
+        #endregion
     }
 }

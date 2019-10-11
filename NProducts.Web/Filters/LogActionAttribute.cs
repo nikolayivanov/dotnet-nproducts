@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace NProducts.Web.Filters
 {
     /// <summary>
+    /// Action filter.
     /// Logs Action start/end. 
     /// Uses option, which on/off logging parameters of Action method (by default – it’s off).
     /// </summary>

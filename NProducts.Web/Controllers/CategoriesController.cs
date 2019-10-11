@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -95,15 +96,15 @@ namespace NProducts.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName,Description,Picture")] CategoriesDTO categories)
+        public async Task<IActionResult> Edit([Bind("CategoryId,CategoryName,Description,Picture")] CategoriesDTO categories)
         {
-            if (id != categories.CategoryId)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
+                if (categories.CategoryId < 0)
+                {
+                    return NotFound();
+                }
+
                 try
                 {
                     this.unitofwork.Categories.Update(categories.ConvertToCategories());
@@ -122,7 +123,8 @@ namespace NProducts.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(categories);
+
+            return View("Edit", categories);
         }
 
         // GET: Categories/Delete/5
