@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -91,12 +93,29 @@ namespace NProducts.Web.Controllers
             return View(categories.ConvertToCategoriesDTO());
         }
 
+        // GET: Categories/GetPicture/5
+        public IActionResult GetPicture(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var categories = this.unitofwork.Categories.Get(id.Value);
+            if (categories == null)
+            {
+                return NotFound();
+            }
+
+            return File(categories.Picture, "image/jpeg", categories.CategoryName + ".jpeg");
+        }
+
         // POST: Categories/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("CategoryId,CategoryName,Description,Picture")] CategoriesDTO categories)
+        public async Task<IActionResult> Edit([Bind("CategoryId,CategoryName,Description,Picture")] CategoriesDTO categories, IFormFile uploadedFile)
         {
             if (ModelState.IsValid)
             {
@@ -107,6 +126,27 @@ namespace NProducts.Web.Controllers
 
                 try
                 {
+                    byte[] imageData = null;
+
+                    if (uploadedFile != null)
+                    {
+                        if (string.Compare(uploadedFile.ContentType, "image/jpeg", true) != 0)
+                        {
+                            ModelState.AddModelError("OnlyJpeg", "Invalid Picture format. Only jpeg is allowed.");
+                            return View(categories);
+                        }
+
+                        this.logger.LogDebug("Category picture change: $uploadedFile.FileName", uploadedFile.FileName);
+                        
+                        // считываем переданный файл в массив байтов
+                        using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
+                        {
+                            imageData = binaryReader.ReadBytes((int)uploadedFile.Length);
+                        }
+                        
+                        categories.Picture = imageData;
+                    }
+
                     this.unitofwork.Categories.Update(categories.ConvertToCategories());
                     await this.unitofwork.SaveChangesAsync();
                 }
@@ -152,7 +192,7 @@ namespace NProducts.Web.Controllers
             this.unitofwork.Categories.Delete(id);
             await this.unitofwork.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
+        }       
 
         private bool CategoriesExists(int id)
         {
