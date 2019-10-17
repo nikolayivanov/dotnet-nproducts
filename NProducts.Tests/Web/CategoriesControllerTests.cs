@@ -158,7 +158,7 @@ namespace NProducts.Tests.Web
 
             // Act
             TestHelper.TryValidateModel(categoriesController, categories);
-            var result = await categoriesController.Edit(categories);
+            var result = await categoriesController.Edit(categories.CategoryId);
 
             // Assert
             var viewResult = MyAssert.IsType<ViewResult>(result);
