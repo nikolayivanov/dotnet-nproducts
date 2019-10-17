@@ -32,7 +32,7 @@ namespace NProducts.Web
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     logging.AddConsole();
                     logging.AddDebug();
-                    logging.AddFile("SeriLogs/NProducts-{Date}.txt");
+                    logging.AddFile(hostingContext.Configuration.GetSection("SeriLogging"));
                 });
 
             return webHost;
