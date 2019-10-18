@@ -13,6 +13,7 @@ using NProducts.DAL.Context;
 using NProducts.Data.Common;
 using NProducts.Data.Interfaces;
 using NProducts.Web.Filters;
+using NProducts.Web.Middleware;
 
 namespace NProducts.Web
 {
@@ -36,6 +37,7 @@ namespace NProducts.Web
             });
 
             services.Configure<NProductsOptions>(Configuration.GetSection("NproductsWebOptions"));
+            services.Configure<ImageCachingOptions>(Configuration.GetSection("ImageCachingOptions"));            
 
             // Add service filters.
             services.AddScoped<LogActionAttribute>();
@@ -49,9 +51,8 @@ namespace NProducts.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger, ILoggerFactory loggerFactory)
-        {
-            loggerFactory.AddFile("SeriLogs/nproducts.{Date}.txt");
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
+        {            
             logger.LogInformation("Application path: {ContentRootPath}", env.ContentRootPath);
             using (logger.BeginScope("Application Configuration:"))
             {
@@ -83,6 +84,9 @@ namespace NProducts.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseStatusCodePages();
+
+            // my custom middleware
+            app.UseImageCaching();
 
             app.UseMvc(routes =>
             {
