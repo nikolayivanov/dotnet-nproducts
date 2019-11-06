@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NProducts.BLL", "NProducts.BLL\NProducts.BLL.csproj", "{356C7704-84DF-41A2-85C7-C2448A2E73F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NProducts.BLL", "NProducts.BLL\NProducts.BLL.csproj", "{356C7704-84DF-41A2-85C7-C2448A2E73F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NProducts.DAL", "NProducts.DAL\NProducts.DAL.csproj", "{A9A84E45-381D-46CE-9CD9-09D380C30BAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NProducts.DAL", "NProducts.DAL\NProducts.DAL.csproj", "{A9A84E45-381D-46CE-9CD9-09D380C30BAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NProducts.Data", "NProducts.Data\NProducts.Data.csproj", "{1F039551-1ED0-44D8-B4DA-89CC0C881415}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NProducts.Data", "NProducts.Data\NProducts.Data.csproj", "{1F039551-1ED0-44D8-B4DA-89CC0C881415}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NProducts.Web", "NProducts.Web\NProducts.Web.csproj", "{A4420126-AF8E-4990-8187-A0901A0FE20D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NProducts.Web", "NProducts.Web\NProducts.Web.csproj", "{A4420126-AF8E-4990-8187-A0901A0FE20D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NProducts.WebApi", "NProducts.WebApi\NProducts.WebApi.csproj", "{3BDE1422-6987-4432-8F44-A46E1EDFB8D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NProducts.WebApi", "NProducts.WebApi\NProducts.WebApi.csproj", "{3BDE1422-6987-4432-8F44-A46E1EDFB8D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NProducts.Tests", "NProducts.Tests\NProducts.Tests.csproj", "{87648084-6A0B-4639-9C48-4BE41298A3A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NProducts.Tests", "NProducts.Tests\NProducts.Tests.csproj", "{87648084-6A0B-4639-9C48-4BE41298A3A4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NProducts.ApiTests", "NProducts.ApiTests\NProducts.ApiTests.csproj", "{08852783-9485-419B-8353-22A88C007657}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,9 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{356C7704-84DF-41A2-85C7-C2448A2E73F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -100,5 +99,23 @@ Global
 		{87648084-6A0B-4639-9C48-4BE41298A3A4}.Release|x64.Build.0 = Release|Any CPU
 		{87648084-6A0B-4639-9C48-4BE41298A3A4}.Release|x86.ActiveCfg = Release|Any CPU
 		{87648084-6A0B-4639-9C48-4BE41298A3A4}.Release|x86.Build.0 = Release|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Debug|x64.Build.0 = Debug|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Debug|x86.Build.0 = Debug|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Release|x64.ActiveCfg = Release|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Release|x64.Build.0 = Release|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Release|x86.ActiveCfg = Release|Any CPU
+		{08852783-9485-419B-8353-22A88C007657}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7A66C504-3E4D-4D9A-9DCB-7EFC7F7FAEDA}
 	EndGlobalSection
 EndGlobal
